@@ -32,7 +32,7 @@ app.post("/contact", async (req, res) => {
     try {
         const userData = new User(req.body)
         await userData.save()
-        res.status(201).render("contact")
+        res.status(201).render("result") //this will redirect to result.hbs file
     } catch (error) {
         res.status(500).send(error)
     }
