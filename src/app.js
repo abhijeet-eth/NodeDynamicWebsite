@@ -3,6 +3,7 @@ const app = express();
 const path = require("path")
 require("./db/conn")
 const hbs = require("hbs")
+const User = require("./models/usermessage")
 
 const port = process.env.PORT || 8000;
 
@@ -20,13 +21,21 @@ app.use('/jq', express.static(path.join(__dirname, "../node_modules/jquery/dist"
 app.set("view engine", "hbs")
 app.set("views", templatepath)
 hbs.registerPartials(partialpath)
+app.use(express.urlencoded({ extended: false }))
 
 app.get("/", (req, res) => {
     res.render("index")  //while using hbs use 'render' instead of 'send' cuz we are rendering to index.hbs page
 })
 
-app.get("/contact", (req, res) => {
-    res.render("contact")  //while using hbs use 'render' instead of 'send' cuz we are rendering to contact.hbs page
+
+app.post("/contact", async (req, res) => {
+    try {
+        const userData = new User(req.body)
+        await userData.save()
+        res.status(201).render("contact")
+    } catch (error) {
+        res.status(500).send(error)
+    }
 })
 
 app.listen(port, () => {
